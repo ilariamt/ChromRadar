@@ -1,0 +1,7 @@
+# prova
+class Annot:
+  def __init__(self, size, file_type):
+    self.size = size
+    self.type = file_type		#possible: gtf, bed file
+    
+   def FileToDataframe(self):
