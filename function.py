@@ -1,12 +1,11 @@
-import os
+import os, subprocess, gzip
 import pandas as pd
-from FILE NAME import FUNCTION NAME #this is for other functions
+#from FILE NAME import FUNCTION NAME #this is for other functions
 
 
 # other functions (how to import them to be recognized inside classes?)
 # how to set them as globals ?
 # Wrapper function to execute subprocesses
-import subprocess
 def bash_command(cmd):
     p = subprocess.Popen(
         ['/bin/bash', '-o', 'pipefail'],
@@ -21,58 +20,83 @@ def bash_command(cmd):
     stdout, stdin = p.communicate(cmd)
     return stdout.strip('\n')
 
+def zipped_file(filepath):
+  """Determines if file is compressed gzip. Returns bool value.
+  """
+  with open(filepath, 'rb') as test_f:
+    return test_f.read(2) == b'\x1f\x8b'
+
+def file_to_df(filepath):
+  """Converts tab delimited file to DataFrame. Returns pandas.DataFrame.
+  """
+  if zipped_file(filepath) == False:
+    with open(filepath) as f:
+      counts=0
+      for line in f:
+        if line.startswith('##'):
+          counts += 1
+    header=counts
+    # import data as dataframe
+    df=pd.read_csv(filepath,skiprows=header,header=None,sep="\t")
+  else:
+    with gzip.open(filepath,"rb") as f:
+      counts=0
+      for line in f:
+        if line.startswith(b'##'):
+          counts += 1
+    df=pd.read_csv(filepath,skiprows=counts,header=None,sep="\t",compression='gzip')
+  return df
 
 
 class Annot:
   def __init__(self,path):
     self.path=path
-    with open(self.path) as f:
-      counts=0
-      for line in f:
-          if line.startswith('##'):
-              counts += 1
-    header=counts
-    # import data as dataframe
-    df=pd.read_csv(self.path,skiprows=header,header=None,sep="\t")
-    if len(df.columns) == 9:
+    self.name=os.path.basename(os.path.normpath(self.path)).rsplit(".")[0]
+    self.df=file_to_df(self.path)
+    if len(self.df.columns) == 9:
       file_type="gtf"
       cols=9
     else:
       file_type="bed"
-      cols=len(df.columns)
+      cols=len(self.df.columns)
     #define some self attributes of the file
-    self.name=os.path.basename(os.path.normpath(path))
-    self.df=df
     self.file_type=file_type
     self.cols=cols
     
   def check_type(self):
-    """check file type"""
-    return self.df, self.file_type, self.cols  
-
+    """check file type
+    """
+    return self.df, self.file_type, self.cols
+    
+    
   def intersect(self,chrom_segment):
-    """This function performs bedtools intersect on the annotation GTF format with the 
-    ChromHMM segment.bed output of the model"""
+    """This function performs bedtools intersect on the annotation GTF format with the ChromHMM segment.bed output of the model.
+    """
     #define segment model
     segment=chrom_segment
     #define annot model
     annot=self.path
     #define the intersect file (create dir for each different annot object)
     cwd = os.getcwd()
-    intersect = cwd+"/"+self.name+"/intersect.bed"
-    os.makedirs(intersect, exist_ok=True)
-    cmd=f'bedtools intersect -a {annot} -b {segment} > {intersect}'
+    os.makedirs(cwd+"/"+self.name, exist_ok=True)
+    is_file = cwd+"/"+self.name+"/intersect.bed"
+    cmd=f'bedtools intersect -a {annot} -b {segment} > {is_file}'
     bash_command(cmd)
-    return False
+    self.intersectdf=file_to_df(is_file)
+    return self.intersectdf
+    
+  def check_intersect(self):
+    return self.intersectdf
+
+
+
+  #a=Annot("./prova.gtf.gz")
+# filename.gtf=Annot(".")
+
+
 
 
     
-
-class BED(Annot):
-  def un
-  pass
-  return False
-
 
 
 
