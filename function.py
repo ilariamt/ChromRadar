@@ -71,21 +71,31 @@ class Annot:
     """
     return self.df, self.file_type, self.cols
     
-  def intersect(self,chrom_dir):
+  def intersect(self,chrom_obj_path):
     """This function performs bedtools intersect on the annotation GTF format with the ChromHMM segment.bed output of the model.
     """
     #define segmentation files
-    segment=chrom_dir
+    segment=chrom_obj_path
     #define annot model
     annot=self.path
     #define the intersect file (create dir for each different annot object)
     cwd = os.getcwd()
     os.makedirs(cwd+"/intersect/", exist_ok=True)
     isect_file = cwd+"/intersect/"+self.name+"_intersect.bed"
-    cmd=f'bedtools intersect -a {annot} -b {chrom_dir}/*_coverage.bed -wao > {isect_file}'
+    cmd=f'bedtools intersect -a {annot} -b {segment} -wao > {isect_file}'
     bash_command(cmd)
-    self.intersectdf=file_to_df(is_file)
+    self.intersectdf=file_to_df(isect_file)
     return self.intersectdf
+
+
+
+class Bed(Annot):
+  pass
+
+  def intersect(self,chrom_obj_path):
+    """Intersects a bed annotation file with Chrom_segmentation file.
+    """
+    return
     
   # def check_intersect(self):
   #   return self.intersectdf
@@ -115,46 +125,28 @@ class ChromObj:
     self.states=np.unique(self.df.iloc[:,3])
     
   def out(self):
+    """Check the dataframe obtained from segment ChromHMM file.
+    """
     return self.df
 
-  def StateFiles(self):
-    """Separates the segment ChromHMM output file into state-specific coverage bed files.
+  def get_path(self):
+    """Returns path to ChromHMM segmentation file.
     """
-    #define directory where to put the various coverage files
-    cwd = os.getcwd()
-    os.makedirs(cwd+"/ChromHMM_state_coverage", exist_ok=True)
-    chrom_dir=cwd+"/ChromHMM_state_coverage"
-    for state in self.states:
-      cmd=f'zcat {self.path} | grep -w {state} > {chrom_dir}/{state}_coverage.bed'
-      bash_command(cmd)
-    return chrom_dir
+    return self.path
+
+  # def StateFiles(self,dir_name):
+  #   """Separates the segment ChromHMM output file into state-specific coverage bed files.
+  #   """
+  #   #define directory where to put the various coverage files
+  #   cwd = os.getcwd()
+  #   os.makedirs(cwd+"/"+dir_name, exist_ok=True)
+  #   chrom_dir=cwd+"/"+dir_name
+  #   for state in self.states:
+  #     cmd=f'zcat {self.path} | grep -w {state} > {chrom_dir}/{state}_coverage.bed'
+  #     bash_command(cmd)
+  #   return chrom_dir
     
 
-    segment=chrom_segment
-    #define annot model
-    annot=self.path
-    #define the intersect file (create dir for each different annot object)
-
-    is_file = cwd+"/"+self.name+"/intersect.bed"
-    
-    bash_command(cmd)
-    self.intersectdf=file_to_df(is_file)
-    return self.intersectdf
-
-
-
-
-    self.name=os.path.basename(os.path.normpath(self.path)).rsplit(".")[0]
-    self.df=file_to_df(self.path)
-    if len(self.df.columns) == 9:
-      file_type="gtf"
-      cols=9
-    else:
-      file_type="bed"
-      cols=len(self.df.columns)
-    #define some self attributes of the file
-    self.file_type=file_type
-    self.cols=cols
 
 for i in $array_num; do line=$(sed -n "${i}p" $file); echo $i; \
 	segment_file=$(echo $line | awk -F' ' '{ print $3}'); echo $segment_file; folder=$(echo $line | awk -F' ' '{ print $4}'); states=$(echo $line | awk -F' ' '{ print $2}'); \
