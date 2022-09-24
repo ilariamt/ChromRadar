@@ -66,4 +66,10 @@ def dataframe(filename):
 # final code:
 path="path"
 a=Annot(path)
+a=Annot("./prova.gtf.gz")
 df,type,cols=a.check_type()
+c=ChromObj()
+# StateFiles returns the directory of all segment bed files
+chrom_files=c.StateFiles()
+# call intersect on all the chrom_segment files
+a.intersect(chrom_files)    #gets me a dir (intersect) with all the annot files intersected
