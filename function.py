@@ -1,5 +1,6 @@
 import os, subprocess, gzip
 import pandas as pd
+import numpy as np
 #from FILE NAME import FUNCTION NAME #this is for other functions
 
 
@@ -48,6 +49,8 @@ def file_to_df(filepath):
   return df
 
 
+
+
 class Annot:
   def __init__(self,path):
     self.path=path
@@ -68,25 +71,25 @@ class Annot:
     """
     return self.df, self.file_type, self.cols
     
-    
-  def intersect(self,chrom_segment):
+  def intersect(self,chrom_dir):
     """This function performs bedtools intersect on the annotation GTF format with the ChromHMM segment.bed output of the model.
     """
-    #define segment model
-    segment=chrom_segment
+    #define segmentation files
+    segment=chrom_dir
     #define annot model
     annot=self.path
     #define the intersect file (create dir for each different annot object)
     cwd = os.getcwd()
-    os.makedirs(cwd+"/"+self.name, exist_ok=True)
-    is_file = cwd+"/"+self.name+"/intersect.bed"
-    cmd=f'bedtools intersect -a {annot} -b {segment} > {is_file}'
+    os.makedirs(cwd+"/intersect/", exist_ok=True)
+    isect_file = cwd+"/intersect/"+self.name+"_intersect.bed"
+    cmd=f'bedtools intersect -a {annot} -b {chrom_dir}/*_coverage.bed -wao > {isect_file}'
     bash_command(cmd)
     self.intersectdf=file_to_df(is_file)
     return self.intersectdf
     
-  def check_intersect(self):
-    return self.intersectdf
+  # def check_intersect(self):
+  #   return self.intersectdf
+  # shall I correct bed files to gtf or gtf files to bed?
 
 
 
@@ -104,3 +107,59 @@ class Annot:
 # executes only a single command with arguments as a list
 # NO pipe commands
 
+# ------------------------------------------------------------------------------------------------------------------
+class ChromObj:
+  def __init__(self,path):
+    self.path=path
+    self.df=file_to_df(self.path)
+    self.states=np.unique(self.df.iloc[:,3])
+    
+  def out(self):
+    return self.df
+
+  def StateFiles(self):
+    """Separates the segment ChromHMM output file into state-specific coverage bed files.
+    """
+    #define directory where to put the various coverage files
+    cwd = os.getcwd()
+    os.makedirs(cwd+"/ChromHMM_state_coverage", exist_ok=True)
+    chrom_dir=cwd+"/ChromHMM_state_coverage"
+    for state in self.states:
+      cmd=f'zcat {self.path} | grep -w {state} > {chrom_dir}/{state}_coverage.bed'
+      bash_command(cmd)
+    return chrom_dir
+    
+
+    segment=chrom_segment
+    #define annot model
+    annot=self.path
+    #define the intersect file (create dir for each different annot object)
+
+    is_file = cwd+"/"+self.name+"/intersect.bed"
+    
+    bash_command(cmd)
+    self.intersectdf=file_to_df(is_file)
+    return self.intersectdf
+
+
+
+
+    self.name=os.path.basename(os.path.normpath(self.path)).rsplit(".")[0]
+    self.df=file_to_df(self.path)
+    if len(self.df.columns) == 9:
+      file_type="gtf"
+      cols=9
+    else:
+      file_type="bed"
+      cols=len(self.df.columns)
+    #define some self attributes of the file
+    self.file_type=file_type
+    self.cols=cols
+
+for i in $array_num; do line=$(sed -n "${i}p" $file); echo $i; \
+	segment_file=$(echo $line | awk -F' ' '{ print $3}'); echo $segment_file; folder=$(echo $line | awk -F' ' '{ print $4}'); states=$(echo $line | awk -F' ' '{ print $2}'); \
+	OUTDIR="/mnt/projects/labs/GEBI/_Epigen/chipSeq/Chrom_states/Chrom_Controls/KN_variants_200bp/${folder}"; mkdir -p ${OUTDIR}; \
+	declare -a states; states=$(zcat $segment_file | awk '{print $4}' | sort | uniq); echo $states; \
+	zcat $segment_file | awk '{print $4}' | sort | uniq >> ${OUTDIR}/states.txt; \
+	state_list=${OUTDIR}/states.txt; \
+	for state in ${states[@]}; do echo $state; zcat ${segment_file} | grep -w $state > ${OUTDIR}/${state}_segment.bed; done; \
