@@ -9,6 +9,7 @@ $$ enrichment = { \frac{bp\ annotation ∩ state}{bp\ state} ÷ \frac{bp\ genome
 This normalization stategy can be useful for state identification and comparison. However, for my workflow, I wanted to quantitatively compare state-enrichment profiles of different annotations, especially not well characterized ones. My aim was to observe specific enrichments of an epigenetic profile on my regions of interest.   
      
 Here I developed `ChromRadar`, a function for annotation-centric normalization and enrichment track visualization through radarplots.   
+   
 **Basic workflow:**   
 1. The full paths to annotation files are specified as a list within the `config` file, both *.gtf* and *.bed* formats are accepted
 2. The full path to the `segments.bed` file is specified inside the `config` file.
