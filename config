@@ -1,0 +1,11 @@
+# specify a directory containing all annotation files
+dir_annotations=
+## OR
+# specify a only a list of annotation files to use from directory
+list_annotations=
+
+# specify the path to the ChromHMM segmentation file:
+path_chrom_segment=
+
+# specify stuff about plots:
+
