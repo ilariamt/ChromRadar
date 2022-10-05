@@ -6,7 +6,7 @@ The `LearnModel` function automatically returns an `overlap.txt`, a matrix repre
 
 $$ enrichment = { \frac{bp\ annotation ∩ state}{bp\ state} ÷ \frac{bp\ genome ∩ annotation}{bp\ genome} } $$   
 
-This normalization stategy can be useful for state identification and comparison. However, for my workflow, I wanted to quantitatively compare state-enrichment profiles of different annotations, especially not well characterized ones. My aim was to observe specific enrichments of an epigenetic profile on my regions of interest.   
+This normalization stategy can be useful for state identification and comparison. However, for my workflow, I wanted to quantitatively compare state-enrichments on different genomic elements, especially not well characterized ones. My aim was to observe distinctive epigenetic profiles on my regions of interest.   
      
 Here I developed `ChromRadar`, a function for annotation-centric normalization and enrichment track visualization through radarplots.   
    
