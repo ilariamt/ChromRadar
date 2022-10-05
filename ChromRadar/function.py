@@ -3,8 +3,7 @@ import os, subprocess, gzip
 import pandas as pd
 import numpy as np
 #from FILE NAME import FUNCTION NAME #this is for other functions
-# other functions (how to import them to be recognized inside classes?)
-# how to set them as globals ?
+
 # Wrapper function to execute subprocesses
 def bash_command(cmd):
     p = subprocess.Popen(
