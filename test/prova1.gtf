@@ -1,0 +1,7 @@
+chr1	HAVANA	gene	11806096	11848079	.	+	.	gene_id "ENSG00000011021.23"; gene_type "protein_coding"; gene_name "CLCN6"; level "2"; hgnc_id "HGNC:2024"; havana_gene "OTTHUMG00000002299.8"; tag "overlapping_locus"; ID "24837"
+chr1	HAVANA	gene	19682240	19799945	.	-	.	gene_id "ENSG00000162542.14"; gene_type "protein_coding"; gene_name "TMCO4"; level "2"; hgnc_id "HGNC:27393"; havana_gene "OTTHUMG00000002697.1"; ID "36236"
+chr1	HAVANA	gene	25430858	25500209	.	+	.	gene_id "ENSG00000204178.11"; gene_type "protein_coding"; gene_name "MACO1"; level "2"; hgnc_id "HGNC:25572"; havana_gene "OTTHUMG00000003473.6"; ID "47228"
+chr1	HAVANA	gene	27322145	27336400	.	+	.	gene_id "ENSG00000186501.15"; gene_type "protein_coding"; gene_name "TMEM222"; level "2"; hgnc_id "HGNC:25363"; havana_gene "OTTHUMG00000004410.6"; tag "overlapping_locus"; ID "51778"
+chr1	HAVANA	gene	27970344	28088637	.	-	.	gene_id "ENSG00000158161.16"; gene_type "protein_coding"; gene_name "EYA3"; level "2"; hgnc_id "HGNC:3521"; havana_gene "OTTHUMG00000003916.2"; tag "overlapping_locus"; ID "53641"
+chr1	HAVANA	gene	28887091	29120046	.	+	.	gene_id "ENSG00000159023.22"; gene_type "protein_coding"; gene_name "EPB41"; level "2"; hgnc_id "HGNC:3377"; havana_gene "OTTHUMG00000003644.30"; tag "ncRNA_host"; ID "55320"
+chr1	HAVANA	gene	32292083	32333635	.	+	.	gene_id "ENSG00000116478.12"; gene_type "protein_coding"; gene_name "HDAC1"; level "1"; hgnc_id "HGNC:4852"; havana_gene "OTTHUMG00000007529.6"; ID "62541"

@@ -63,13 +63,40 @@ def dataframe(filename):
     return pd.DataFrame(result)
 
 
+
+# subprocess.Popen() class for creation and managment of executed process
+# executes only a single command with arguments as a list
+# NO pipe commands
+
+# adding method to check if it's a tab delimitet file and else error!
+
+
+
+
 # final code:
 path="path"
 a=Annot(path)
 a=Annot("./prova.gtf.gz")
-df,type,cols=a.check_type()
-c=ChromObj()
-# StateFiles returns the directory of all segment bed files
-chrom_files=c.StateFiles()
-# call intersect on all the chrom_segment files
-a.intersect(chrom_files)    #gets me a dir (intersect) with all the annot files intersected
+df,type_f,cols, zipped = a.check_type()
+if type_f=="bed":
+    a=Bed()    # change class: has a special intersect method
+c=ChromObj("./prova_segment.bed")
+# call intersect on the chrom_segment file
+intersectdf = a.intersect(c.GetPath())
+ # intersect gets a 14 field gtf:
+ # (1-8) chr1	HAVANA	gene	91949343	92014426	.	+	.
+ # (9) gene_id "ENSG00000137948.19"; gene_type "protein_coding"; gene_name "BRDT"
+ # (10-14) chr1	91951200	91951400	E17	200
+
+ # intersect with a bed file (genome col=6)
+ # (1-6) chr1	0	248956422	.	248956422	.
+ # (7-11) chr1	0	10200	E18	10200
+
+ # intersect with a peak bed file (genome col=10)
+ # needs to first be intersected
+ # (1-10) chr1	955000	1014999	0.0	140.53137740928133	.	11587	7230	0.0	1.4053137740928132
+ # (11-15) chr1	955200	955600	E5	400
+
+
+
+
